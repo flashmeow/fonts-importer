@@ -20,7 +20,7 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 			mkdir ~/.fonts
 			DESTINATION_FOLDER=~/.fonts
 		else
-			echo "Error -4: User does not have write permission to the home folder"
+			echo "Error -4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
 			exit -4
 		fi
 	fi
@@ -42,7 +42,7 @@ else	# Make sure user has write permission to the specified destination folder
 						mkdir ~/.fonts
 						DESTINATION_FOLDER=~/.fonts
 					else
-						echo "Error -4: User does not have write permission to the home folder, cannot create \"~/.fonts\"."
+						echo "Error -4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
 						exit -4
 					fi
 				else
@@ -50,14 +50,14 @@ else	# Make sure user has write permission to the specified destination folder
 					exit 1
 				fi
 
-				echo "Error -5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\""
+				echo "Error -5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Aborting"
 			fi
 
 		fi
 	fi
 
 	if [ ! -w "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error -3: User does not have write permission for the destination folder"
+	echo "Error -3: User does not have write permission for the destination folder. Aborting."
 	exit -3
 	fi
 fi
