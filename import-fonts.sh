@@ -15,6 +15,8 @@ function set_dotfonts_folder() {
 	return 0
 }
 
+# Verification of source directory
+
 SOURCE_PARENT_FOLDER=${1}
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
@@ -27,7 +29,9 @@ echo "Error 2: User does not have read permission for the source folder. Abortin
 exit 2
 fi
 
-DESTINATION_FOLDER=${2}		# Might use ${2:~/.fonts} for default, but no handling for if ~/.fonts doesn't exist
+# Verification of destination directory
+
+DESTINATION_FOLDER=${2}
 
 if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to ~/.fonts, and create if if necessary.
 	return_status=($set_dotfonts_folder)
@@ -38,12 +42,13 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 		fi
 	fi
 	DESTINATION_FOLDER=~/.fonts
+
 else	# Make sure user has write permission to the specified destination folder
 	if [ ! -d "$DESTINATION_FOLDER" ]; then
 		echo "$DESTINATION_FOLDER does not exist. Would you like to create it? [y/n]"
 		read create_destination_folder
 		if [ "${create_destination_folder,,}" = "y" ]; then
-			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then
+			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Verify we can create the directory
 				mkdir "$DESTINATION_FOLDER"
 			else
 				echo "Cannot create \"$DESTINATION_FOLDER\". Would you like to use \"~/.fonts\" instead? [y/N]"
@@ -76,7 +81,7 @@ fi
 shopt -s globstar
 
 dfont_counter=0
-# See if there are any .dfont files
+# Count number of .dfont files in source directory and subdirectories
 for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do
 	((dfont_counter++))
 done
