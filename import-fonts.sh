@@ -3,13 +3,13 @@
 SOURCE_PARENT_FOLDER=${1}
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-echo "Error -1: Source folder does not exist"
-exit -1
+echo "Error 1: Source folder does not exist"
+exit 1
 fi
 
 if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
-echo "Error -2: User does not have read permission for the source folder"
-exit -2
+echo "Error 2: User does not have read permission for the source folder. Aborting."
+exit 2
 fi
 
 DESTINATION_FOLDER=${2}		# Might use ${2:~/.fonts} for default, but no handling for if ~/.fonts doesn't exist
@@ -24,9 +24,7 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 			exit -4
 		fi
 	fi
-
 	DESTINATION_FOLDER=~/.fonts
-
 else	# Make sure user has write permission to the specified destination folder
 	if [ ! -d "$DESTINATION_FOLDER" ]; then
 		echo "$DESTINATION_FOLDER does not exist. Would you like to create it? [y/n]"
@@ -35,7 +33,7 @@ else	# Make sure user has write permission to the specified destination folder
 			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then
 				mkdir "$DESTINATION_FOLDER"
 			else
-				echo "Would you like to use \"~/.fonts\"? [y/N]"
+				echo "Cannot create \"$DESTINATION_FOLDER\". Would you like to use \"~/.fonts\" instead? [y/N]"
 				read use_fonts
 				if [ "${use_fonts,,}" = "y" ]; then
 					if [ -w ~/ ]; then
@@ -46,19 +44,16 @@ else	# Make sure user has write permission to the specified destination folder
 						exit -4
 					fi
 				else
-					echo "Aborted."
-					exit 1
+					echo "Error 5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Aborting"
+					exit 5
 				fi
-
-				echo "Error -5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Aborting"
 			fi
-
 		fi
 	fi
 
-	if [ ! -w "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error -3: User does not have write permission for the destination folder. Aborting."
-	exit -3
+	if [ ! -w "$DESTINATION_FOLDER" ]; then
+	echo "Error 3: User does not have write permission for the destination folder. Aborting."
+	exit 3
 	fi
 fi
 
