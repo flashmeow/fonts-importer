@@ -88,19 +88,23 @@ for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do
 done
 
 if [ "$dfont_counter" -gt 0 ]; then
-	TEMP_FOLDER=$(mktemp -d)	# Create temp folder so nothing is changed. May not work on macs
-	for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do	# Whitespace-safe and recusive
-		filename=$(basename "$file" .dfont)
-		if [ ! -e "$filename".tff ]; then	# Sees if file has already been converted, otherwise convert file
-			(
-			cd "$TEMP_FOLDER"
-			fondu -force "$file"
-			cp "$filename".ttf "$DESTINATION_FOLDER"
-			rm ./*
-			)
-		fi
-	done
-rm -R "$TEMP_FOLDER"
+ 	if fondu; then		# Make sure fondu is installed. Will return error 127 if not installed
+		TEMP_FOLDER=$(mktemp -d)	# Create temp folder so nothing is changed. May not work on macs
+		for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do	# Whitespace-safe and recusive
+			filename=$(basename "$file" .dfont)
+			if [ ! -e "$filename".tff ]; then	# Sees if file has already been converted, otherwise convert file
+				(
+				cd "$TEMP_FOLDER"
+				fondu -force "$file"
+				cp "$filename".ttf "$DESTINATION_FOLDER"
+				rm ./*
+				)
+			fi
+		done
+		rm -R "$TEMP_FOLDER"
+	else
+		echo "Fondu is not installed. Please install it through your package manager. Skipping .dfont files."
+	fi
 fi
 
 # Find all files with font extentions and copy them to the destination folder
