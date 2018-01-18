@@ -28,6 +28,34 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 	DESTINATION_FOLDER=~/.fonts
 
 else	# Make sure user has write permission to the specified destination folder
+	if [ ! -d "$DESTINATION_FOLDER" ]; then
+		echo "$DESTINATION_FOLDER does not exist. Would you like to create it? [y/n]"
+		read create_destination_folder
+		if [ "${create_destination_folder,,}" = "y" ]; then
+			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then
+				mkdir "$DESTINATION_FOLDER"
+			else
+				echo "Would you like to use \"~/.fonts\"? [y/N]"
+				read use_fonts
+				if [ "${use_fonts,,}" = "y" ]; then
+					if [ -w ~/ ]; then
+						mkdir ~/.fonts
+						DESTINATION_FOLDER=~/.fonts
+					else
+						echo "Error -4: User does not have write permission to the home folder, cannot create \"~/.fonts\"."
+						exit -4
+					fi
+				else
+					echo "Aborted."
+					exit 1
+				fi
+
+				echo "Error -5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\""
+			fi
+
+		fi
+	fi
+
 	if [ ! -w "$SOURCE_PARENT_FOLDER" ]; then
 	echo "Error -3: User does not have write permission for the destination folder"
 	exit -3
