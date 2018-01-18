@@ -1,5 +1,20 @@
 #!/bin/bash
 
+
+function set_dotfonts_folder() {
+	if [ ! -d ~/.fonts ]; then
+		# Make sure we can create the folder
+		if [ -w ~/ ]; then
+			mkdir ~/.fonts
+		else
+			# We cannot make the file, return error code 4
+			return 4
+		fi
+	fi
+	DESTINATION_FOLDER=~/.fonts
+	return 0
+}
+
 SOURCE_PARENT_FOLDER=${1}
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
@@ -15,13 +30,11 @@ fi
 DESTINATION_FOLDER=${2}		# Might use ${2:~/.fonts} for default, but no handling for if ~/.fonts doesn't exist
 
 if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to ~/.fonts, and create if if necessary.
-	if [ ! -d ~/.fonts ]; then
-		if [ -w ~/ ]; then
-			mkdir ~/.fonts
-			DESTINATION_FOLDER=~/.fonts
-		else
-			echo "Error -4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
-			exit -4
+	return_status=($set_dotfonts_folder)
+	if [ "$set_dotfonts_folder" -ne "0" ]; then
+		if [ "$set_dotfonts_folder" -eq "4" ]; then
+			echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
+			exit 4
 		fi
 	fi
 	DESTINATION_FOLDER=~/.fonts
@@ -36,12 +49,12 @@ else	# Make sure user has write permission to the specified destination folder
 				echo "Cannot create \"$DESTINATION_FOLDER\". Would you like to use \"~/.fonts\" instead? [y/N]"
 				read use_fonts
 				if [ "${use_fonts,,}" = "y" ]; then
-					if [ -w ~/ ]; then
-						mkdir ~/.fonts
-						DESTINATION_FOLDER=~/.fonts
-					else
-						echo "Error -4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
-						exit -4
+					return_status=$(set_dotfonts_folder)
+					if [ "$return_status" -ne "0" ]; then
+						if [ "$return_status" -eq "4" ]; then
+							echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
+							exit 4
+						fi
 					fi
 				else
 					echo "Error 5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Aborting"
