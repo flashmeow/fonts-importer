@@ -20,7 +20,7 @@ function set_dotfonts_folder() {
 SOURCE_PARENT_FOLDER=${1}
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-echo "Error 1: Source folder does not exist"
+echo "Error 1: Source folder does not exist. Aborting."
 exit 1
 fi
 
