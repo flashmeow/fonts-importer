@@ -41,7 +41,6 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 			exit 4
 		fi
 	fi
-	DESTINATION_FOLDER=~/.fonts
 
 else	# Make sure user has write permission to the specified destination folder
 	if [ ! -d "$DESTINATION_FOLDER" ]; then
