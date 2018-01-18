@@ -34,9 +34,10 @@ fi
 DESTINATION_FOLDER=${2}
 
 if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to ~/.fonts, and create if if necessary.
-	return_status=($set_dotfonts_folder)
-	if [ "$set_dotfonts_folder" -ne "0" ]; then
-		if [ "$set_dotfonts_folder" -eq "4" ]; then
+	set_dotfonts_folder
+	return_status=$?
+	if [ "$return_status" -ne "0" ]; then
+		if [ "$return_status" -eq "4" ]; then
 			echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
 			exit 4
 		fi
@@ -53,7 +54,8 @@ else	# Make sure user has write permission to the specified destination folder
 				echo "Cannot create \"$DESTINATION_FOLDER\". Would you like to use \"~/.fonts\" instead? [y/N]"
 				read use_fonts
 				if [ "${use_fonts,,}" = "y" ]; then
-					return_status=$(set_dotfonts_folder)
+					set_dotfonts_folder
+					return_status=$?
 					if [ "$return_status" -ne "0" ]; then
 						if [ "$return_status" -eq "4" ]; then
 							echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
