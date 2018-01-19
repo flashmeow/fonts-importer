@@ -1,4 +1,20 @@
 #!/bin/bash
+#===============================================================================
+#
+#          FILE: import-fonts.sh
+#
+#         USAGE: ./import-fonts.sh
+#
+#   DESCRIPTION: Copies font files from a source to a destination folder. Also converts .dfont files to .tff on the fly
+#
+#       OPTIONS: None
+#  REQUIREMENTS: fondu, for converting .dfont files. Not needed otherwise
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: flashmeow
+#       CREATED: 01/19/2018 14:26
+#      REVISION: 2
+#===============================================================================
 
 
 #---  FUNCTION  ----------------------------------------------------------------
