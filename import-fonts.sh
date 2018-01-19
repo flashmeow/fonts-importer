@@ -111,8 +111,6 @@ fi
 # Find all files with font extentions and copy them to the destination folder
 find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
 
-# Remove temp folder
-rm -rf "$TEMP_FOLDER"
 
 # Font cache needs to be restarted before the imported fonts can be used
 echo -e "\nDone copying!\nWould you like to restart the font cache? [y/N]"
