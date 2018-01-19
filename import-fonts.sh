@@ -1,6 +1,12 @@
 #!/bin/bash
 
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  set_dotfonts_folder
+#   DESCRIPTION:  Sets the destination folder (DESTINATION_FOLDER) to ~/.fonts. Tries to create if it doesn't exist
+#    PARAMETERS:  None
+#       RETURNS:  0 if success, 4 if no write permission to ~/.fonts
+#-------------------------------------------------------------------------------
 function set_dotfonts_folder() {
 	if [ ! -d ~/.fonts ]; then
 		# Make sure we can create the folder
@@ -15,7 +21,10 @@ function set_dotfonts_folder() {
 	return 0
 }
 
+
+#-------------------------------------------------------------------------------
 # Verification of source directory
+#-------------------------------------------------------------------------------
 
 SOURCE_PARENT_FOLDER=${1}
 
@@ -29,7 +38,10 @@ if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
 	exit 2
 fi
 
+
+#-------------------------------------------------------------------------------
 # Verification of destination directory
+#-------------------------------------------------------------------------------
 
 DESTINATION_FOLDER=${2}
 
@@ -77,7 +89,10 @@ else	# Make sure user has write permission to the specified destination folder
 	fi
 fi
 
+
+#-------------------------------------------------------------------------------
 # Convert .dfont files to .ttf files
+#-------------------------------------------------------------------------------
 
 # Globstar is enabled to allow for recursive searching
 shopt -s globstar
@@ -112,7 +127,10 @@ fi
 find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
 
 
-# Font cache needs to be restarted before the imported fonts can be used
+#-------------------------------------------------------------------------------
+# Restart font cache
+#-------------------------------------------------------------------------------
+
 echo -e "\nDone copying!\nWould you like to restart the font cache? [y/N]"
 
 read should_restart_cache
