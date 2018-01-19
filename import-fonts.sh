@@ -113,9 +113,7 @@ find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' 
 # Remove temp folder
 rm -rf "$TEMP_FOLDER"
 
-echo -e "\nDone copying!"
-
-echo -e "\nWould you like to restart the font cache? [y/N]"
+echo -e "\nDone copying!\nWould you like to restart the font cache? [y/N]"
 
 read should_restart_cache
 
