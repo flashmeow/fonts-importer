@@ -106,7 +106,7 @@ done
 if [ "$dfont_counter" -gt 0 ]; then
 	if fondu; then			# Make sure fondu is installed. Will return error 127 if not installed
 		TEMP_FOLDER=$(mktemp -d)	# Create temp folder so nothing is changed. May not work on macs, see https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
-		for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do	# Whitespace-safe and recusive
+		for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do	# Whitespace-safe and recusive search for .dfont files
 			filename=$(basename "$file" .dfont)
 			if [ ! -e "$filename".tff ]; then	# Sees if file has already been converted, otherwise convert file
 				(
@@ -123,12 +123,16 @@ if [ "$dfont_counter" -gt 0 ]; then
 	fi
 fi
 
+
+#-------------------------------------------------------------------------------
 # Find all files with font extentions and copy them to the destination folder
+#-------------------------------------------------------------------------------
+
 find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
 
 
 #-------------------------------------------------------------------------------
-# Restart font cache
+# Restart the font cache to recognize the new fonts
 #-------------------------------------------------------------------------------
 
 echo -e "\nDone copying!\nWould you like to restart the font cache? [y/N]"
