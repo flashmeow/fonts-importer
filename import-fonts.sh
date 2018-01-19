@@ -20,13 +20,13 @@ function set_dotfonts_folder() {
 SOURCE_PARENT_FOLDER=${1}
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-echo "Error 1: Source folder does not exist. Aborting."
-exit 1
+	echo "Error 1: Source folder does not exist. Aborting."
+	exit 1
 fi
 
 if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
-echo "Error 2: User does not have read permission for the source folder. Aborting."
-exit 2
+	echo "Error 2: User does not have read permission for the source folder. Aborting."
+	exit 2
 fi
 
 # Verification of destination directory
@@ -48,7 +48,8 @@ else	# Make sure user has write permission to the specified destination folder
 		echo "$DESTINATION_FOLDER does not exist. Would you like to create it? [y/n]"
 		read create_destination_folder
 		if [ "${create_destination_folder,,}" = "y" ]; then
-			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Verify we can create the directory
+			# Verify we can create the directory
+			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then
 				mkdir "$DESTINATION_FOLDER"
 			else
 				echo "Cannot create \"$DESTINATION_FOLDER\". Would you like to use \"~/.fonts\" instead? [y/N]"
@@ -71,25 +72,25 @@ else	# Make sure user has write permission to the specified destination folder
 	fi
 
 	if [ ! -w "$DESTINATION_FOLDER" ]; then
-	echo "Error 3: User does not have write permission for the destination folder. Aborting."
-	exit 3
+		echo "Error 3: User does not have write permission for the destination folder. Aborting."
+		exit 3
 	fi
 fi
 
-# Find all files with a .dfont extension and convert them to .tff. Creates a temp folder in the destination for the fondued files. TODO: Verify fondu is installed, skip this if it is not. See https://linuxconfig.org/how-to-test-for-installed-package-using-shell-script-on-ubuntu-and-debian
+# Convert .dfont files to .ttf files
 
-# Enable globstar
+# Globstar is enabled to allow for recursive searching
 shopt -s globstar
 
-dfont_counter=0
 # Count number of .dfont files in source directory and subdirectories
+dfont_counter=0
 for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do
 	((dfont_counter++))
 done
 
 if [ "$dfont_counter" -gt 0 ]; then
- 	if fondu; then		# Make sure fondu is installed. Will return error 127 if not installed
-		TEMP_FOLDER=$(mktemp -d)	# Create temp folder so nothing is changed. May not work on macs
+	if fondu; then			# Make sure fondu is installed. Will return error 127 if not installed
+		TEMP_FOLDER=$(mktemp -d)	# Create temp folder so nothing is changed. May not work on macs, see https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
 		for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do	# Whitespace-safe and recusive
 			filename=$(basename "$file" .dfont)
 			if [ ! -e "$filename".tff ]; then	# Sees if file has already been converted, otherwise convert file
@@ -113,6 +114,7 @@ find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' 
 # Remove temp folder
 rm -rf "$TEMP_FOLDER"
 
+# Font cache needs to be restarted before the imported fonts can be used
 echo -e "\nDone copying!\nWould you like to restart the font cache? [y/N]"
 
 read should_restart_cache
