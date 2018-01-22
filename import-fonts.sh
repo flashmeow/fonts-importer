@@ -38,9 +38,44 @@ function set_dotfonts_folder() {
 }
 
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME: get_help
+#   DESCRIPTION: Prints a help message
+#    PARAMETERS: None
+#       RETURNS: None
 #-------------------------------------------------------------------------------
-# Verification of source directory
+function get_help() {
+	cat << EOF
+	Usage: ${0##*/} -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER] [-cfv]
+	Copy fonts from the SOURCE_DIRECTORY to the DESTINATION_FOLDER. If no DESTINATION_FOLDER is specified, copy files to ~/.fonts
+
+	-t DESTINATION_FOLDER 	copy fonts to the specified folder
+	-f			force overwriting of existing font files
+	-c			create the destination folder if it doesn't exits
+	-v			verbose mode
+
+EOF
+}
+
+
 #-------------------------------------------------------------------------------
+# GETOPTS flag handling
+#-------------------------------------------------------------------------------
+# Variables
+verbose=0
+force=0
+create_destination_folder=0
+
+# GETOPTS
+while getopts "s:t:fcv" opt; do
+	case $opt in
+		s)	SOURCE_PARENT_FOLDER=$OPTARG;;
+		t)	DESTINATION_FOLDER=$OPTARG;;
+		f)	force=1;;
+		c)	create_destination_folder=1;;
+		v)	verbose=1;;
+	esac
+done
 
 
 #-------------------------------------------------------------------------------
@@ -65,8 +100,6 @@ fi
 # Verification of destination directory
 #-------------------------------------------------------------------------------
 
-DESTINATION_FOLDER=${2}
-
 if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to ~/.fonts, and create if if necessary.
 	set_dotfonts_folder
 	return_status=$?
@@ -77,30 +110,14 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 		fi
 	fi
 
-else	# Make sure user has write permission to the specified destination folder
-	if [ ! -d "$DESTINATION_FOLDER" ]; then
-		echo "$DESTINATION_FOLDER does not exist. Would you like to create it? [y/n]"
-		read create_destination_folder
-		if [ "${create_destination_folder,,}" = "y" ]; then
-			# Verify we can create the directory
-			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then
+else
+	if [ ! -d "$DESTINATION_FOLDER" ]; then		# Directory doesn't exist yet
+		if [ $create_destination_folder = 1 ]; then
+			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Make sure we can create the folder
 				mkdir "$DESTINATION_FOLDER"
 			else
-				echo "Cannot create \"$DESTINATION_FOLDER\". Would you like to use \"~/.fonts\" instead? [y/N]"
-				read use_fonts
-				if [ "${use_fonts,,}" = "y" ]; then
-					set_dotfonts_folder
-					return_status=$?
-					if [ "$return_status" -ne "0" ]; then
-						if [ "$return_status" -eq "4" ]; then
-							echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
-							exit 4
-						fi
-					fi
-				else
-					echo "Error 5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Aborting"
-					exit 5
-				fi
+				echo "Error 5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Exiting."
+				exit 5
 			fi
 		fi
 	fi
