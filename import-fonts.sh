@@ -82,17 +82,18 @@ done
 # Verification of source directory
 #-------------------------------------------------------------------------------
 if [ -z "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 1: you must provide a source directory. Exiting."
-fi
-
-if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 2: Source folder does not exist. Exiting."
+	echo "Error 2: you must provide a source directory. Exiting."
 	exit 2
 fi
 
-if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 3: User does not have read permission for the source folder. Exiting."
+if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
+	echo "Error 3: Source folder does not exist. Exiting."
 	exit 3
+fi
+
+if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
+	echo "Error 4: User does not have read permission for the source folder. Exiting."
+	exit 4
 fi
 
 
@@ -105,8 +106,8 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 	return_status=$?
 	if [ "$return_status" -ne "0" ]; then
 		if [ "$return_status" -eq "4" ]; then
-			echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Exiting."
-			exit 4
+			echo "Error 5: User does not have write permission to the home folder, cannot create \"~/.fonts\". Exiting."
+			exit 5
 		fi
 	fi
 
@@ -116,15 +117,15 @@ else
 			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Make sure we can create the folder
 				mkdir "$DESTINATION_FOLDER"
 			else
-				echo "Error 5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Exiting."
-				exit 5
+				echo "Error 6: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Exiting."
+				exit 6
 			fi
 		fi
 	fi
 
 	if [ ! -w "$DESTINATION_FOLDER" ]; then
-		echo "Error 4: User does not have write permission for \"$DESTINATION_FOLDER\" Exiting."
-		exit 4
+		echo "Error 5: User does not have write permission for \"$DESTINATION_FOLDER\" Exiting."
+		exit 5
 	fi
 fi
 
