@@ -148,18 +148,7 @@ find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' 
 
 
 #-------------------------------------------------------------------------------
-# Restart the font cache to recognize the new fonts
+# Remind user to restart the font cache
 #-------------------------------------------------------------------------------
-
-echo -e "\nDone copying!\nWould you like to restart the font cache? [y/N]"
-
-read should_restart_cache
-
-if [ "${should_restart_cache,,}" = "y" ]; then		# 2 commas convert to lowercase
-	echo -e "Restarting the font cache"
-	# Restart the font cache to use the fonts immediately
-	fc-cache -f
-	echo -e "\nDone!"
-else echo -e "\nPlease restart or run fc-cache to start using the fonts\n"
-fi
+echo -e "Done.\nPlease restart or run fc-cache to start using the fonts\n"
 
