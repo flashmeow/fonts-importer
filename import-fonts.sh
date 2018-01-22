@@ -28,30 +28,72 @@ function set_dotfonts_folder() {
 		# Make sure we can create the folder
 		if [ -w ~/ ]; then
 			mkdir ~/.fonts
+			DESTINATION_FOLDER=~/.fonts
 		else
 			# We cannot make the file, return error code 4
-			return 4
+			echo "Error 5: User does not have write permission to the home folder, cannot create \"~/.fonts\". Exiting."
+			exit 5
 		fi
 	fi
-	DESTINATION_FOLDER=~/.fonts
-	return 0
 }
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME: get_help
+#   DESCRIPTION: Prints a help message
+#    PARAMETERS: None
+#       RETURNS: None
+#-------------------------------------------------------------------------------
+function get_help() {
+	cat << EOF
+	Usage: ${0##*/} -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER] [-cfv]
+	Copy fonts from the SOURCE_DIRECTORY to the DESTINATION_FOLDER. If no DESTINATION_FOLDER is specified, copy files to ~/.fonts
+
+	-t DESTINATION_FOLDER 	copy fonts to the specified folder
+	-f			force overwriting of existing font files
+	-c			create the destination folder if it doesn't exits
+	-v			verbose mode
+
+EOF
+}
+
+
+#-------------------------------------------------------------------------------
+# GETOPTS flag handling
+#-------------------------------------------------------------------------------
+# Variables
+verbose=0
+force=0
+create_destination_folder=0
+
+# GETOPTS
+while getopts "s:t:fcv" opt; do
+	case $opt in
+		s)	SOURCE_PARENT_FOLDER=$OPTARG;;
+		t)	DESTINATION_FOLDER=$OPTARG;;
+		f)	force=1;;
+		c)	create_destination_folder=1;;
+		v)	verbose=1;;
+	esac
+done
 
 
 #-------------------------------------------------------------------------------
 # Verification of source directory
 #-------------------------------------------------------------------------------
-
-SOURCE_PARENT_FOLDER=${1}
+if [ -z "$SOURCE_PARENT_FOLDER" ]; then
+	echo "Error 2: you must provide a source directory. Exiting."
+	exit 2
+fi
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 1: Source folder does not exist. Aborting."
-	exit 1
+	echo "Error 3: Source folder does not exist. Exiting."
+	exit 3
 fi
 
 if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 2: User does not have read permission for the source folder. Aborting."
-	exit 2
+	echo "Error 4: User does not have read permission for the source folder. Exiting."
+	exit 4
 fi
 
 
@@ -59,49 +101,30 @@ fi
 # Verification of destination directory
 #-------------------------------------------------------------------------------
 
-DESTINATION_FOLDER=${2}
-
 if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to ~/.fonts, and create if if necessary.
 	set_dotfonts_folder
 	return_status=$?
 	if [ "$return_status" -ne "0" ]; then
 		if [ "$return_status" -eq "4" ]; then
-			echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
-			exit 4
+			exit 5
 		fi
 	fi
 
-else	# Make sure user has write permission to the specified destination folder
-	if [ ! -d "$DESTINATION_FOLDER" ]; then
-		echo "$DESTINATION_FOLDER does not exist. Would you like to create it? [y/n]"
-		read create_destination_folder
-		if [ "${create_destination_folder,,}" = "y" ]; then
-			# Verify we can create the directory
-			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then
+else
+	if [ ! -d "$DESTINATION_FOLDER" ]; then		# Directory doesn't exist yet
+		if [ $create_destination_folder = 1 ]; then
+			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Make sure we can create the folder
 				mkdir "$DESTINATION_FOLDER"
 			else
-				echo "Cannot create \"$DESTINATION_FOLDER\". Would you like to use \"~/.fonts\" instead? [y/N]"
-				read use_fonts
-				if [ "${use_fonts,,}" = "y" ]; then
-					set_dotfonts_folder
-					return_status=$?
-					if [ "$return_status" -ne "0" ]; then
-						if [ "$return_status" -eq "4" ]; then
-							echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
-							exit 4
-						fi
-					fi
-				else
-					echo "Error 5: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Aborting"
-					exit 5
-				fi
+				echo "Error 6: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Exiting."
+				exit 6
 			fi
 		fi
 	fi
 
 	if [ ! -w "$DESTINATION_FOLDER" ]; then
-		echo "Error 3: User does not have write permission for the destination folder. Aborting."
-		exit 3
+		echo "Error 5: User does not have write permission for \"$DESTINATION_FOLDER\" Exiting."
+		exit 5
 	fi
 fi
 
@@ -117,6 +140,9 @@ shopt -s globstar
 dfont_counter=0
 for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do
 	((dfont_counter++))
+	if [ $verbose -gt 0 ]; then
+		echo "Counted $dfont_counter .dfont files"
+	fi
 done
 
 if [ "$dfont_counter" -gt 0 ]; then
@@ -144,22 +170,15 @@ fi
 # Find all files with font extentions and copy them to the destination folder
 #-------------------------------------------------------------------------------
 
-find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
-
-
-#-------------------------------------------------------------------------------
-# Restart the font cache to recognize the new fonts
-#-------------------------------------------------------------------------------
-
-echo -e "\nDone copying!\nWould you like to restart the font cache? [y/N]"
-
-read should_restart_cache
-
-if [ "${should_restart_cache,,}" = "y" ]; then		# 2 commas convert to lowercase
-	echo -e "Restarting the font cache"
-	# Restart the font cache to use the fonts immediately
-	fc-cache -f
-	echo -e "\nDone!"
-else echo -e "\nPlease restart or run fc-cache to start using the fonts\n"
+if [ $force -eq 0 ]; then
+	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
+else
+	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp -f '{}' "$DESTINATION_FOLDER" \;
 fi
+
+
+#-------------------------------------------------------------------------------
+# Remind user to restart the font cache
+#-------------------------------------------------------------------------------
+echo -e "Done.\nPlease restart or run fc-cache to start using the fonts\n"
 
