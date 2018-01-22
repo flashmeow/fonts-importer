@@ -42,16 +42,22 @@ function set_dotfonts_folder() {
 # Verification of source directory
 #-------------------------------------------------------------------------------
 
-SOURCE_PARENT_FOLDER=${1}
+
+#-------------------------------------------------------------------------------
+# Verification of source directory
+#-------------------------------------------------------------------------------
+if [ -z "$SOURCE_PARENT_FOLDER" ]; then
+	echo "Error 1: you must provide a source directory. Exiting."
+fi
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 1: Source folder does not exist. Aborting."
-	exit 1
+	echo "Error 2: Source folder does not exist. Exiting."
+	exit 2
 fi
 
 if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 2: User does not have read permission for the source folder. Aborting."
-	exit 2
+	echo "Error 3: User does not have read permission for the source folder. Exiting."
+	exit 3
 fi
 
 
@@ -66,7 +72,7 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 	return_status=$?
 	if [ "$return_status" -ne "0" ]; then
 		if [ "$return_status" -eq "4" ]; then
-			echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Aborting."
+			echo "Error 4: User does not have write permission to the home folder, cannot create \"~/.fonts\". Exiting."
 			exit 4
 		fi
 	fi
@@ -100,8 +106,8 @@ else	# Make sure user has write permission to the specified destination folder
 	fi
 
 	if [ ! -w "$DESTINATION_FOLDER" ]; then
-		echo "Error 3: User does not have write permission for the destination folder. Aborting."
-		exit 3
+		echo "Error 4: User does not have write permission for \"$DESTINATION_FOLDER\" Exiting."
+		exit 4
 	fi
 fi
 
