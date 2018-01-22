@@ -140,6 +140,9 @@ shopt -s globstar
 dfont_counter=0
 for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do
 	((dfont_counter++))
+	if [ $verbose -gt 0 ]; then
+		echo "Counted $dfont_counter .dfont files"
+	fi
 done
 
 if [ "$dfont_counter" -gt 0 ]; then
@@ -167,7 +170,11 @@ fi
 # Find all files with font extentions and copy them to the destination folder
 #-------------------------------------------------------------------------------
 
-find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
+if [ $force -eq 0 ]; then
+	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
+else
+	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp -f '{}' "$DESTINATION_FOLDER" \;
+fi
 
 
 #-------------------------------------------------------------------------------
