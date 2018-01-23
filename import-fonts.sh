@@ -82,7 +82,7 @@ done
 # Verification of source directory
 #-------------------------------------------------------------------------------
 if [ -z "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 2: you must provide a source directory. Exiting."
+	echo "Error 2: You must provide a source directory. Exiting."
 	exit 2
 fi
 
