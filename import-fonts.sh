@@ -3,7 +3,7 @@
 #
 #          FILE: import-fonts.sh
 #
-#         USAGE: ./import-fonts.sh
+#         USAGE: ./import-fonts.sh [-cfv] -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER]
 #
 #   DESCRIPTION: Copies font files from a source to a destination folder. Also converts .dfont files to .tff on the fly
 #
@@ -28,13 +28,14 @@ function set_dotfonts_folder() {
 		# Make sure we can create the folder
 		if [ -w ~/ ]; then
 			mkdir ~/.fonts
-			DESTINATION_FOLDER=~/.fonts
 		else
 			# We cannot make the file, return error code 4
 			echo "Error 5: User does not have write permission to the home folder, cannot create \"~/.fonts\". Exiting."
 			exit 5
 		fi
 	fi
+
+	DESTINATION_FOLDER=~/.fonts
 }
 
 
@@ -46,15 +47,17 @@ function set_dotfonts_folder() {
 #-------------------------------------------------------------------------------
 function get_help() {
 	cat << EOF
-	Usage: ${0##*/} -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER] [-cfv]
+	Usage: ${0##*/} [-cfv] -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER]
 	Copy fonts from the SOURCE_DIRECTORY to the DESTINATION_FOLDER. If no DESTINATION_FOLDER is specified, copy files to ~/.fonts
 
+	-h			shows this message and exits
 	-t DESTINATION_FOLDER 	copy fonts to the specified folder
 	-f			force overwriting of existing font files
 	-c			create the destination folder if it doesn't exits
 	-v			verbose mode
 
 EOF
+exit 0
 }
 
 
@@ -67,13 +70,15 @@ force=0
 create_destination_folder=0
 
 # GETOPTS
-while getopts "s:t:fcv" opt; do
+while getopts "s:t:fcvh" opt; do
 	case $opt in
 		s)	SOURCE_PARENT_FOLDER=$OPTARG;;
 		t)	DESTINATION_FOLDER=$OPTARG;;
 		f)	force=1;;
 		c)	create_destination_folder=1;;
 		v)	verbose=1;;
+		h)	get_help;;
+		*)	echo "Invalid option: -$OPTARG" >&2; get_help;;
 	esac
 done
 
@@ -82,17 +87,17 @@ done
 # Verification of source directory
 #-------------------------------------------------------------------------------
 if [ -z "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 2: you must provide a source directory. Exiting."
+	echo "Error 2: You must provide a source directory. Exiting."
 	exit 2
 fi
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 3: Source folder does not exist. Exiting."
+	echo "Error 3: Source is not a directory. Exiting."
 	exit 3
 fi
 
 if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 4: User does not have read permission for the source folder. Exiting."
+	echo "Error 4: User does not have read permission for the source directory. Exiting."
 	exit 4
 fi
 
@@ -103,22 +108,19 @@ fi
 
 if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to ~/.fonts, and create if if necessary.
 	set_dotfonts_folder
-	return_status=$?
-	if [ "$return_status" -ne "0" ]; then
-		if [ "$return_status" -eq "4" ]; then
-			exit 5
-		fi
-	fi
 
 else
 	if [ ! -d "$DESTINATION_FOLDER" ]; then		# Directory doesn't exist yet
 		if [ $create_destination_folder = 1 ]; then
-			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Make sure we can create the folder
+			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Check for write permissions in the parent of the destination directory
 				mkdir "$DESTINATION_FOLDER"
 			else
 				echo "Error 6: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Exiting."
 				exit 6
 			fi
+		else
+			echo "Error 7: $DESTINATION_FOLDER is not an existing folder. Use the -c flag to create it. Exiting."
+			exit 7
 		fi
 	fi
 
@@ -150,7 +152,7 @@ if [ "$dfont_counter" -gt 0 ]; then
 		TEMP_FOLDER=$(mktemp -d)	# Create temp folder so nothing is changed. May not work on macs, see https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
 		for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do	# Whitespace-safe and recusive search for .dfont files
 			filename=$(basename "$file" .dfont)
-			if [ ! -e "$filename".tff ]; then	# Sees if file has already been converted, otherwise convert file
+			if [ ! -e "$filename".tff ]; then	# Checks if file has already been converted, otherwise convert file
 				(
 				cd "$TEMP_FOLDER"
 				fondu -force "$file"
@@ -171,9 +173,9 @@ fi
 #-------------------------------------------------------------------------------
 
 if [ $force -eq 0 ]; then
-	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
+	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp -n '{}' "$DESTINATION_FOLDER" \;
 else
-	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp -f '{}' "$DESTINATION_FOLDER" \;
+	find "$SOURCE_PARENT_FOLDER" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_FOLDER" \;
 fi
 
 
