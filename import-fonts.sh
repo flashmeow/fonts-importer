@@ -103,12 +103,6 @@ fi
 
 if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to ~/.fonts, and create if if necessary.
 	set_dotfonts_folder
-	return_status=$?
-	if [ "$return_status" -ne "0" ]; then
-		if [ "$return_status" -eq "4" ]; then
-			exit 5
-		fi
-	fi
 
 else
 	if [ ! -d "$DESTINATION_FOLDER" ]; then		# Directory doesn't exist yet
