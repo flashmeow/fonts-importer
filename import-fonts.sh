@@ -152,7 +152,7 @@ if [ "$dfont_counter" -gt 0 ]; then
 		TEMP_FOLDER=$(mktemp -d)	# Create temp folder so nothing is changed. May not work on macs, see https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
 		for file in "$SOURCE_PARENT_FOLDER"/**/*.dfont; do	# Whitespace-safe and recusive search for .dfont files
 			filename=$(basename "$file" .dfont)
-			if [ ! -e "$filename".tff ]; then	# Sees if file has already been converted, otherwise convert file
+			if [ ! -e "$filename".tff ]; then	# Checks if file has already been converted, otherwise convert file
 				(
 				cd "$TEMP_FOLDER"
 				fondu -force "$file"
