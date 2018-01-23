@@ -68,3 +68,6 @@ teardown() {
 	run ${SCRIPT} -s "$SOURCE_DIRECTORY" -t "$TARGET_DIRECTORY"/non_existent_directory
 	assert_failure 7
 }
+
+#TODO Add test for set_dotfonts_folder, no write permission to ~/.fonts
+#TODO Add test for -f flag, see if files are overwritten
