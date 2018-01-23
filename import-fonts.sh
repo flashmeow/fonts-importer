@@ -49,12 +49,14 @@ function get_help() {
 	Usage: ${0##*/} -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER] [-cfv]
 	Copy fonts from the SOURCE_DIRECTORY to the DESTINATION_FOLDER. If no DESTINATION_FOLDER is specified, copy files to ~/.fonts
 
+	-h			shows this message and exits
 	-t DESTINATION_FOLDER 	copy fonts to the specified folder
 	-f			force overwriting of existing font files
 	-c			create the destination folder if it doesn't exits
 	-v			verbose mode
 
 EOF
+exit 0
 }
 
 
@@ -67,13 +69,14 @@ force=0
 create_destination_folder=0
 
 # GETOPTS
-while getopts "s:t:fcv" opt; do
+while getopts "s:t:fcvh" opt; do
 	case $opt in
 		s)	SOURCE_PARENT_FOLDER=$OPTARG;;
 		t)	DESTINATION_FOLDER=$OPTARG;;
 		f)	force=1;;
 		c)	create_destination_folder=1;;
 		v)	verbose=1;;
+		h)	get_help;;
 	esac
 done
 
