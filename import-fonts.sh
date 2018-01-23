@@ -3,7 +3,7 @@
 #
 #          FILE: import-fonts.sh
 #
-#         USAGE: ./import-fonts.sh
+#         USAGE: ./import-fonts.sh [-cfv] -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER]
 #
 #   DESCRIPTION: Copies font files from a source to a destination folder. Also converts .dfont files to .tff on the fly
 #
@@ -46,7 +46,7 @@ function set_dotfonts_folder() {
 #-------------------------------------------------------------------------------
 function get_help() {
 	cat << EOF
-	Usage: ${0##*/} -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER] [-cfv]
+	Usage: ${0##*/} [-cfv] -s SOURCE_DIRECTORY [-t DESTINATION_FOLDER]
 	Copy fonts from the SOURCE_DIRECTORY to the DESTINATION_FOLDER. If no DESTINATION_FOLDER is specified, copy files to ~/.fonts
 
 	-h			shows this message and exits
