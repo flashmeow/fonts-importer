@@ -87,12 +87,12 @@ if [ -z "$SOURCE_PARENT_FOLDER" ]; then
 fi
 
 if [ ! -d "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 3: Source folder does not exist. Exiting."
+	echo "Error 3: Source is not a directory. Exiting."
 	exit 3
 fi
 
 if [ ! -r "$SOURCE_PARENT_FOLDER" ]; then
-	echo "Error 4: User does not have read permission for the source folder. Exiting."
+	echo "Error 4: User does not have read permission for the source directory. Exiting."
 	exit 4
 fi
 
