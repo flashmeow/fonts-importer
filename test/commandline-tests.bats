@@ -62,4 +62,6 @@ teardown() {
 	assert_failure 6
 }
 
-#TODO pass destination as non-existent
+@test "Missing -c flag when destination is non-existent" {
+	run ${SCRIPT} -s "$SOURCE_DIRECTORY" -t "$TARGET_DIRECTORY"/non_existent_directory
+}
