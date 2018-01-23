@@ -77,6 +77,7 @@ while getopts "s:t:fcvh" opt; do
 		c)	create_destination_folder=1;;
 		v)	verbose=1;;
 		h)	get_help;;
+		*)	echo "Invalid option: -$OPTARG" >&2; get_help;;
 	esac
 done
 
