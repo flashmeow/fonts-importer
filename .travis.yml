@@ -1,17 +1,5 @@
 language: bash
 
-before_install:
-        sudo apt-get -qq update
-        sudo apt-get -y fondu
-
-matrix:
-        include:
-                TO_TEST=NO_INSTALLS
-                TO_TEST=INSTALL_PACKAGES
-
-install:
-        if [ "$TO_TEST" = "NO_INSTALLS" ]; then sudo apt-get -y remove fondu; fi
-        if [ "$TO_TEST" = "INSTALL_PACKAGES" ]; then :; fi
 script:
         - ./test.sh
 
