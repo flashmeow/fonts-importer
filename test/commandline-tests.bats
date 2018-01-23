@@ -60,6 +60,8 @@ teardown() {
 
 	run ${SCRIPT} -c -s "$SOURCE_DIRECTORY" -t "$unwritable_directory"/child_folder
 	assert_failure 6
+
+	rmdir "$unwritable_directory"
 }
 
 @test "Missing -c flag when destination is non-existent" {
