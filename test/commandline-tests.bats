@@ -52,3 +52,12 @@ teardown() {
 
 	rmdir "$unwritable_directory"
 }
+
+@test "When creating a destination folder, make sure it is writable" {
+	# Create parent folder
+	unwritable_directory="$(mktemp -d)"
+	chmod -w "$unwritable_directory"
+
+	run ${SCRIPT} -s "$SOURCE_DIRECTORY" -t "$unwritable_directory"/child_folder
+	assert_failure 6
+}
