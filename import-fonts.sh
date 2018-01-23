@@ -111,12 +111,15 @@ if [ -z "$DESTINATION_FOLDER" ]; then	# If the destination is unset, default to 
 else
 	if [ ! -d "$DESTINATION_FOLDER" ]; then		# Directory doesn't exist yet
 		if [ $create_destination_folder = 1 ]; then
-			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Make sure we can create the folder
+			if [ -w "$(dirname "$DESTINATION_FOLDER")" ]; then	# Check for write permissions in the parent of the destination directory
 				mkdir "$DESTINATION_FOLDER"
 			else
 				echo "Error 6: User does not have write permission for \"$(dirname "$DESTINATION_FOLDER")\". Exiting."
 				exit 6
 			fi
+		else
+			echo "Error 7: $DESTINATION_FOLDER is not an existing folder. Use the -c flag to create it. Exiting."
+			exit 7
 		fi
 	fi
 
