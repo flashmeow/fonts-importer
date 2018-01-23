@@ -21,7 +21,10 @@ teardown() {
 	assert_failure 2
 }
 
-# TODO pass other flags
+@test "Check that source directory is specified, even with other flags" {
+	run ${SCRIPT} -t "$TARGET_DIRECTORY"
+	assert_failure 2
+}
 
 @test "Check that the source is a directory" {
 		run ${SCRIPT} -s /bin/bash
