@@ -27,7 +27,7 @@ teardown() {
 }
 
 @test "Check that the source is a directory" {
-		run ${SCRIPT} -s /bin/bash
+	run ${SCRIPT} -s /bin/bash
 	assert_failure 3
 }
 
@@ -61,3 +61,5 @@ teardown() {
 	run ${SCRIPT} -c -s "$SOURCE_DIRECTORY" -t "$unwritable_directory"/child_folder
 	assert_failure 6
 }
+
+#TODO pass destination as non-existent
