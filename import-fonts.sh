@@ -28,13 +28,14 @@ function set_dotfonts_folder() {
 		# Make sure we can create the folder
 		if [ -w ~/ ]; then
 			mkdir ~/.fonts
-			DESTINATION_FOLDER=~/.fonts
 		else
 			# We cannot make the file, return error code 4
 			echo "Error 5: User does not have write permission to the home folder, cannot create \"~/.fonts\". Exiting."
 			exit 5
 		fi
 	fi
+
+	DESTINATION_FOLDER=~/.fonts
 }
 
 
