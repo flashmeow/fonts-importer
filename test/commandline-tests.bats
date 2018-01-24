@@ -69,5 +69,6 @@ teardown() {
 	assert_failure 7
 }
 
+#TODO Add tests for try run. Requires implementation of file tests first
 #TODO Add test for set_dotfonts_directory, no write permission to ~/.fonts
 #TODO Add test for -f flag, see if files are overwritten
