@@ -27,7 +27,11 @@ function set_dotfonts_directory() {
 	if [ ! -d ~/.fonts ]; then
 		# Make sure we can create the directory
 		if [ -w ~/ ]; then
-			mkdir ~/.fonts
+			if [ "$dry_run" == 0 ]; then
+				mkdir ~/.fonts
+			else:
+				echo "Would create ~/.fonts, but this is a dry run."
+			fi
 		else
 			# We cannot make the file, return error code 4
 			echo "Error 5: User does not have write permission to the home directory, cannot create \"~/.fonts\". Exiting."
@@ -113,9 +117,13 @@ if [ -z "$DESTINATION_DIRECTORY" ]; then	# If the destination is unset, default 
 
 else
 	if [ ! -d "$DESTINATION_DIRECTORY" ]; then		# Directory doesn't exist yet
-		if [ $create_destination_directory = 1 ]; then
+		if [ $create_destination_directory == 1 ]; then
 			if [ -w "$(dirname "$DESTINATION_DIRECTORY")" ]; then	# Check for write permissions in the parent of the destination directory
-				mkdir "$DESTINATION_DIRECTORY"
+				if [ "$dry_run" == 0 ]; then
+					mkdir "$DESTINATION_DIRECTORY"
+				else
+					echo "Would create $DESTINATION_DIRECTORY, but this is a dry run"
+				fi
 			else
 				echo "Error 6: User does not have write permission for \"$(dirname "$DESTINATION_DIRECTORY")\". Exiting."
 				exit 6
@@ -151,19 +159,34 @@ done
 
 if [ "$dfont_counter" -gt 0 ]; then
 	if fondu; then			# Make sure fondu is installed. Will return error 127 if not installed
-		TEMP_DIRECTORY=$(mktemp -d)	# Create temp directory so nothing is changed. May not work on macs, see https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
+		if [ $dry_run == 0 ]; then
+			TEMP_DIRECTORY=$(mktemp -d)	# Create temp directory so nothing is changed. May not work on macs, see https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
+		else
+			echo "Would create a temp directory, but this is a dry run."
+		fi
+
 		for file in "$SOURCE_PARENT_DIRECTORY"/**/*.dfont; do	# Whitespace-safe and recusive search for .dfont files
 			filename=$(basename "$file" .dfont)
 			if [ ! -e "$filename".tff ]; then	# Checks if file has already been converted, otherwise convert file
-				(
-				cd "$TEMP_DIRECTORY"
-				fondu -force "$file"
-				cp "$filename".ttf "$DESTINATION_DIRECTORY"
-				rm ./*
-				)
+				if [ $dry_run == 0 ]; then
+					(
+					cd "$TEMP_DIRECTORY"
+					fondu -force "$file"
+					cp "$filename".ttf "$DESTINATION_DIRECTORY"
+					rm ./*
+					)
+				else
+					echo "Would run fondu on $file, but this is a dry run."
+				fi
+
 			fi
 		done
-		rm -R "$TEMP_DIRECTORY"
+		if [ $dry_run == 0 ]; then
+			rm -R "$TEMP_DIRECTORY"
+		else
+			echo "Would remove the temp directory, but this is a dry run."
+		fi
+
 	else
 		echo "Fondu is not installed. Please install it through your package manager. Skipping .dfont files."
 	fi
@@ -175,9 +198,17 @@ fi
 #-------------------------------------------------------------------------------
 
 if [ $force -eq 0 ]; then
-	find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp -n '{}' "$DESTINATION_DIRECTORY" \;
+	if [ $dry_run == 0 ]; then
+		find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp -n '{}' "$DESTINATION_DIRECTORY" \;
+	else
+		echo "Would copy files to $DESTINATION_DIRECTORY without overwriting, but this is a dry run."
+	fi
 else
-	find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_DIRECTORY" \;
+	if [ $dry_run == 0 ]; then
+		find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_DIRECTORY" \;
+	else
+		echo "Would copy files to $DESTINATION_DIRECTORY and overwriting files, but this is a dry run."
+	fi
 fi
 
 
