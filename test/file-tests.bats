@@ -20,8 +20,15 @@ teardown() {
 	[ $count -gt 0 ]
 }
 
+@test "Dry run, don't copy anything, no target specified" {
+	run ${SCRIPT} -d -s "$REAL_FILE_DIRECTORY"
+	assert_output --partial "/.fonts"
+}
+
+@test "Dry run, target specified" {
+	run ${SCRIPT} -d -s "$REAL_FILE_DIRECTORY" -t "$SOURCE_DIRECTORY"
+	assert_output --partial "$SOURCE_DIRECTORY"
+}
 
 
-
-#TODO Add tests for try run. Requires implementation of file tests first
 #TODO Add test for -f flag, see if files are overwritten
