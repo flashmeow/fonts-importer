@@ -32,7 +32,7 @@ teardown() {
 }
 
 @test "Check that the source is readable" {
-	# Create unreadable folder
+	# Create unreadable directory
 	unreadable_directory="$(mktemp -d)"
 	chmod -r "$unreadable_directory"
 
@@ -43,7 +43,7 @@ teardown() {
 }
 
 @test "Check that destination is writable" {
-	# Create unwritable folder
+	# Create unwritable directory
 	unwritable_directory="$(mktemp -d)"
 	chmod -w "$unwritable_directory"
 
@@ -53,12 +53,12 @@ teardown() {
 	rmdir "$unwritable_directory"
 }
 
-@test "When creating a destination folder, make sure the parent folder is writable" {
-	# Create parent folder
+@test "When creating a destination directory, make sure the parent directory is writable" {
+	# Create parent directory
 	unwritable_directory="$(mktemp -d)"
 	chmod -w "$unwritable_directory"
 
-	run ${SCRIPT} -c -s "$SOURCE_DIRECTORY" -t "$unwritable_directory"/child_folder
+	run ${SCRIPT} -c -s "$SOURCE_DIRECTORY" -t "$unwritable_directory"/child_directory
 	assert_failure 6
 
 	rmdir "$unwritable_directory"
@@ -69,5 +69,5 @@ teardown() {
 	assert_failure 7
 }
 
-#TODO Add test for set_dotfonts_folder, no write permission to ~/.fonts
+#TODO Add test for set_dotfonts_directory, no write permission to ~/.fonts
 #TODO Add test for -f flag, see if files are overwritten
