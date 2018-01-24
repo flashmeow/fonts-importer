@@ -1,6 +1,13 @@
 setupEnv() {
+	# Get current path, go up two directories, and enter src/fonts for test files
+	current_path=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+	font_directory_path=${current_path%/*/*}/src/fonts
+	REAL_FILE_DIRECTORY="$font_directory_path"
+	export REAL_FILE_DIRECTORY
+
 	SOURCE_DIRECTORY="$(mktemp -d)"
 	export SOURCE_DIRECTORY
+
 	TARGET_DIRECTORY="$(mktemp -d)"
 	export TARGET_DIRECTORY
 }
