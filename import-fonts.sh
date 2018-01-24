@@ -47,7 +47,7 @@ function set_dotfonts_directory() {
 #-------------------------------------------------------------------------------
 function get_help() {
 	cat << EOF
-	Usage: ${0##*/} [-cfv] -s SOURCE_DIRECTORY [-t DESTINATION_DIRECTORY]
+	Usage: ${0##*/} [-cfvd] -s SOURCE_DIRECTORY [-t DESTINATION_DIRECTORY]
 	Copy fonts from the SOURCE_DIRECTORY to the DESTINATION_DIRECTORY. If no DESTINATION_DIRECTORY is specified, copy files to ~/.fonts
 
 	-h				shows this message and exits
@@ -55,6 +55,7 @@ function get_help() {
 	-f				force overwriting of existing font files
 	-c				create the destination directory if it doesn't exits
 	-v				verbose mode
+	-d				dry run. will not copy any files or make any directories
 
 EOF
 exit 0
@@ -70,13 +71,14 @@ force=0
 create_destination_directory=0
 
 # GETOPTS
-while getopts "s:t:fcvh" opt; do
+while getopts "s:t:fcvhd" opt; do
 	case $opt in
 		s)	SOURCE_PARENT_DIRECTORY=$OPTARG;;
 		t)	DESTINATION_DIRECTORY=$OPTARG;;
 		f)	force=1;;
 		c)	create_destination_directory=1;;
 		v)	verbose=1;;
+		d)	dry_run=1;;
 		h)	get_help;;
 		*)	echo "Invalid option: -$OPTARG" >&2; get_help;;
 	esac
