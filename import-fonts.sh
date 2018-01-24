@@ -145,17 +145,13 @@ fi
 # Convert .dfont files to .ttf files
 #-------------------------------------------------------------------------------
 
-# Globstar is enabled to allow for recursive searching
-shopt -s globstar
 
 # Count number of .dfont files in source directory and subdirectories
-dfont_counter=0
-for file in "$SOURCE_PARENT_DIRECTORY"/**/*.dfont; do
-	((dfont_counter++))
-	if [ $verbose -gt 0 ]; then
-		echo "Counted $dfont_counter .dfont files"
-	fi
-done
+dfont_counter=$(find "$DESTINATION_DIRECTORY" -name '*.dfont' | wc -l)	# Recursive search, wc -l counts the number of lines, with one file per line, counts the number of files
+if [ $verbose != 0 ]; then
+	find "$DESTINATION_DIRECTORY" -name '*.dfont'	# Without piping, find prints the found files
+	echo "Found $dfont_counter .dfont files"
+fi
 
 if [ "$dfont_counter" -gt 0 ]; then
 	if fondu; then			# Make sure fondu is installed. Will return error 127 if not installed
