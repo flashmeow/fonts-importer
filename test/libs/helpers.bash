@@ -7,5 +7,5 @@ setupEnv() {
 
 teardownEnv() {
 	rm -rf "$SOURCE_DIRECTORY"
-	rm -rf "$DESTINATION_FOLDER"
+	rm -rf "$TARGET_DIRECTORY"
 }
