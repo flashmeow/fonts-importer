@@ -30,5 +30,20 @@ teardown() {
 	assert_output --partial "$SOURCE_DIRECTORY"
 }
 
+@test "Don't overwrite file" {
+	run ${SCRIPT} -s "$REAL_FILE_DIRECTORY" -t "$REAL_TARGET_DIRECTORY"
+	size_of_emptyttf="$(du "$REAL_TARGET_DIRECTORY"/empty.ttf | cut -f1)"
+	[ $size_of_emptyttf -eq 0 ]
+	rm "$REAL_TARGET_DIRECTORY"/*
+	touch "$REAL_TARGET_DIRECTORY"/empty.ttf
+}
+
+@test "Overwrite file" {
+	run ${SCRIPT} -f -s "$REAL_FILE_DIRECTORY" -t "$REAL_TARGET_DIRECTORY"
+	size_of_emptyttf="$(du "$REAL_TARGET_DIRECTORY"/empty.ttf | cut -f1)"
+	[ $size_of_emptyttf -gt 0 ]
+	rm "$REAL_TARGET_DIRECTORY"/*
+	touch "$REAL_TARGET_DIRECTORY"/empty.ttf
+}
 
 #TODO Add test for -f flag, see if files are overwritten
