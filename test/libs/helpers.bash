@@ -8,7 +8,6 @@ setupEnv() {
 	REAL_TARGET_DIRECTORY=${current_path%/*}/src/destination
 	export REAL_TARGET_DIRECTORY
 
-
 	SOURCE_DIRECTORY="$(mktemp -d)"
 	export SOURCE_DIRECTORY
 
