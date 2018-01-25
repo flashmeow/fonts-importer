@@ -18,4 +18,7 @@ setupEnv() {
 teardownEnv() {
 	rm -rf "$SOURCE_DIRECTORY"
 	rm -rf "$TARGET_DIRECTORY"
+
+	rm "$REAL_TARGET_DIRECTORY"/*
+	touch "$REAL_TARGET_DIRECTORY"/empty.ttf
 }
