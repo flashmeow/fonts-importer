@@ -73,6 +73,7 @@ exit 0
 verbose=0
 force=0
 create_destination_directory=0
+dry_run=0
 
 # GETOPTS
 while getopts "s:t:fcvhd" opt; do
@@ -193,7 +194,7 @@ fi
 # Find all files with font extentions and copy them to the destination directory
 #-------------------------------------------------------------------------------
 
-if [ $force -eq 0 ]; then
+if [ $force == 0 ]; then
 	if [ $dry_run == 0 ]; then
 		find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp -n '{}' "$DESTINATION_DIRECTORY" \;
 	else
