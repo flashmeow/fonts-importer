@@ -17,11 +17,6 @@ teardown() {
 }
 
 @test "Check that source directory is specified" {
-	run ${SCRIPT}
-	assert_failure 2
-}
-
-@test "Check that source directory is specified, even with other flags" {
 	run ${SCRIPT} -t "$TARGET_DIRECTORY"
 	assert_failure 2
 }
