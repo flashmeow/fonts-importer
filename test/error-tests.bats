@@ -16,6 +16,12 @@ teardown() {
 	teardownEnv
 }
 
+@test "Show help when no flags are passed" {
+	run ${SCRIPT}
+	assert_success
+	assert_output --partial 'Usage: ./import-fonts.sh'
+}
+
 @test "Check that source directory is specified" {
 	run ${SCRIPT} -t "$TARGET_DIRECTORY"
 	assert_failure 2
