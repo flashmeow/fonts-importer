@@ -6,7 +6,7 @@ load 'libs/bats-assert/load'
 load 'libs/helpers'
 
 # Set script name
-export SCRIPT="./import-fonts.sh"
+export SCRIPT="./fonts-importer.sh"
 
 # Set setup and teardown functions
 setup() {
@@ -19,7 +19,7 @@ teardown() {
 @test "Show help when no flags are passed" {
 	run ${SCRIPT}
 	assert_success
-	assert_output --partial 'Usage: ./import-fonts.sh'
+	assert_output --partial 'Usage: ./fonts-importer.sh'
 }
 
 @test "Check that source directory is specified" {
