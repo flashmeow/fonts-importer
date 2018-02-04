@@ -51,7 +51,7 @@ function set_dotfonts_directory() {
 #-------------------------------------------------------------------------------
 function get_help() {
 	cat << EOF
-	Usage: ${0##*/} [-cfvd] -s SOURCE_DIRECTORY [-t DESTINATION_DIRECTORY]
+	Usage: ./${0##*/} [-cfvd] -s SOURCE_DIRECTORY [-t DESTINATION_DIRECTORY]
 	Copy fonts from the SOURCE_DIRECTORY to the DESTINATION_DIRECTORY. If no DESTINATION_DIRECTORY is specified, copy files to ~/.fonts
 
 	-h				shows this message and exits
@@ -65,6 +65,13 @@ EOF
 exit 0
 }
 
+#-------------------------------------------------------------------------------
+# Show help if no arguments are given
+#-------------------------------------------------------------------------------
+if [ $# -eq 0 ]; then
+	get_help
+	exit 0
+fi
 
 #-------------------------------------------------------------------------------
 # GETOPTS flag handling
