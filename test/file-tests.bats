@@ -5,7 +5,7 @@ load 'libs/bats-file/load'
 load 'libs/helpers'
 
 # Set script name
-export SCRIPT="./import-fonts.sh"
+export SCRIPT="./fonts-importer.sh"
 
 #Set setup and teardown functions
 setup() {
