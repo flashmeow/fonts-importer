@@ -1,9 +1,9 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE: import-fonts.sh
+#          FILE: fonts-importer.sh
 #
-#         USAGE: ./import-fonts.sh [-cfv] -s SOURCE_DIRECTORY [-t DESTINATION_DIRECTORY]
+#         USAGE: ./fonts-importer.sh [-cfv] -s SOURCE_DIRECTORY [-t DESTINATION_DIRECTORY]
 #
 #   DESCRIPTION: Copies font files from a source to a destination directory. Also converts .dfont files to .tff on the fly
 #
