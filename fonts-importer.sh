@@ -211,7 +211,7 @@ else
 	if [ $dry_run == 0 ]; then
 		find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec cp '{}' "$DESTINATION_DIRECTORY" \;
 	else
-		find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec echo "Would copy and overwrite" '{}' " to $DESTINATION_DIRECTORY, but this is a dry run." \;
+		find "$SOURCE_PARENT_DIRECTORY" \( -name '*.ttf' -o -name '*.otf' -o -name '*.ttc' \) -exec echo "Would copy and overwrite if necessary" '{}' " to $DESTINATION_DIRECTORY, but this is a dry run." \;
 	fi
 fi
 
